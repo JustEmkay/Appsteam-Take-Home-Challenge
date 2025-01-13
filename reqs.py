@@ -43,3 +43,18 @@ def getSentimenatAnalysis( userID: str ):
     res= req.status_code
     if res==200:
         return req.json()
+    
+def updateJournal( userID: str, journalID: str, journalInfo ):
+    
+    req= requests.put( API_URL+ f"/journal/update/{userID}/{journalID}",
+                      json= dict(journalInfo) )
+    res= req.status_code
+    if res==200:
+        return req.json()
+    
+def deleteJournal( userID: str, journalID: str ):
+    
+    req= requests.delete( API_URL+ f"/journal/delete/{userID}/{journalID}" )
+    res= req.status_code
+    if res==200:
+        return req.json()

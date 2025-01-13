@@ -25,13 +25,12 @@ class journalInfo(BaseModel):
     journal: str
     created_date: int
     
+    
 # password verifying function
-def hash_pass( userPass: str ) -> str:
+def hashPassword( userPass: str, hashedPass: str= None ) -> bool:
     pswd = userPass.encode('utf-8')
-    return bcrypt.hashpw(pswd,bcrypt.gensalt())
-
-def hash_verify( userPass: str, hashedPass: str ) -> bool:
-    pswd = userPass.encode('utf-8')
+    if not hashedPass:
+        return bcrypt.hashpw(pswd,bcrypt.gensalt())
     return bcrypt.checkpw(pswd,hashedPass)
     
 
@@ -45,24 +44,24 @@ async def test():
 @app.post("/register")
 async def registerUser( register: registerInfo )-> dict:
     
-    # print(register.username)
+    print(register.username)
     
-    if verifyUser(username= register.username):
+    if verifyUsers(username= register.username):
         return {
             'status': False,
             'msg': 'User Exist.'
         }
         
     if insertUser(uid= str(uuid.uuid1()), username= register.username,
-                  password= hash_pass(register.password), q= register.question,
-                  a= hash_pass(register.answer)):
+                  password= hashPassword(userPass= register.password), q= register.question,
+                  a= hashPassword(register.answer)):
         return {
             'status': True,
             'msg': 'Account created successfully.'
         }
            
 @app.post("/verify")
-async def verifyUser( login: loginInfo )-> dict: 
+async def userVerify( login: loginInfo )-> dict: 
 
     # check for user and return uid
     checkUser: tuple= verifyUsers(username= login.username )
@@ -70,7 +69,7 @@ async def verifyUser( login: loginInfo )-> dict:
         # use the usrname and uid to get password as of tuple (ui, un, pwd)
         userCred: tuple= verifyUsers(username= login.username, uid= checkUser[0])
         
-        if hash_verify( userPass= login.password, hashedPass= userCred[2]):
+        if hashPassword( userPass= login.password, hashedPass= userCred[2]):
             
             return {
                 'status': True,
@@ -134,38 +133,12 @@ async def sentiment(uid: str, jid: str)-> dict:
         }
         
     
-# @app.get("/journal/sentiment/{uid}")
-# async def sentiment( uid: str, jidList: list[str] )-> dict:
-    
-#     Rjournals= selectedJournal(uid= uid, jids= jidList)
-    
-#     if Rjournals:
-            
-#         tempDict={}   
-#         for key, jdata in Rjournals.items():
-        
-#             query: str= f"""
-#             {datetime.datetime.fromtimestamp(jdata['created_date']).strftime("%Y-%m-%d")}
-            
-#             {jdata['journal']}
-#             """
-        
-#             result= llm.ollamaRequest(user_query= query, prompt_template= PROMPT_TEMP )
-#             tempDict.update({key: result['response']['message']['content']})
-    
-#         return {
-#             'sentiment': tempDict
-#             }
-    
 @app.get("/journal/sentiment/{uid}")
 async def overallSentiment( uid: str )-> dict:
     
     jdata= getJournals(uid= uid)
     if jdata:
-        # query= {}
-        # for key, data in jdata:
-        #     query 
-        
+
         json_obj= json.dumps(jdata, indent= 2)
         
         response= llm.ollamaRequest(user_query= json_obj, prompt_template= SA_PROMPT )
@@ -174,4 +147,36 @@ async def overallSentiment( uid: str )-> dict:
     
     return {
         'sa': response['response']['message']['content'] 
+    }
+    
+    
+@app.put("/journal/update/{uid}/{jid}")
+async def update( uid: str, jid: str, journal: journalInfo )-> dict:
+    
+    response= updateJournal( userID= uid, journalID= jid,
+                            journal= journal.journal,
+                            updated_date= journal.created_date)
+    if response:
+        return {
+            'status': True,
+            'msg': 'updated successfully.'
+        }
+    return {
+        'status': False,
+        'msg': 'failed to update.' 
+    }
+        
+        
+@app.delete("/journal/delete/{uid}/{jid}")
+async def delete( uid: str, jid: str )-> dict:
+    
+    response= deleteJournal( userID= uid, journalID= jid )
+    if response:
+        return {
+            'status': True,
+            'msg': 'Deleted successfully.'
+        }
+    return {
+        'status': False,
+        'msg': 'failed to Deletion.' 
     }

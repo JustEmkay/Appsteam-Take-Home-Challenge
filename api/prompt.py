@@ -1,5 +1,10 @@
 
-JS_PROMPT= """
+
+JS_PROMPT= """ 
+Your task is to find sentiment emotions detected of the following jounal given by the user.
+"""
+
+JS_PROMPT1= """
     Your job is to Analyze the sentiment of the journal entires to detect emotinal and classify polarity.
     
     Tasks:
@@ -20,7 +25,11 @@ JS_PROMPT= """
 # sentiment analysis prompt
 SA_PROMPT= """
 
-    Your job is to Analyze the sentiment of the journal dictionary and provide a brif note on emotional detection and Polarity Classification
-    by the user.
+    Your job is to Analyze the sentiment of the journals and provide a brif note on emotional detection and Polarity Classification
+    of the user. Don't write unnecessary things.
     
+    Provide a sentiment analysis report, including:
+    * Emotion detection result for each journal entry.
+    * Polarity classification result for each journal entry using percentage  (positive, negative, or neutral)
+    * A brif explanation  supportion your analysis for each journal entry.
 """

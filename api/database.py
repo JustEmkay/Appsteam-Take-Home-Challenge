@@ -140,21 +140,21 @@ def verifyUsers(username: str, uid: str= None)-> tuple:
                         (username, uid, ))            
         
         result= cursor.fetchone()
-        print(result)
         return result
         
     except Exception as e:
         print("Error[readJournal]:",e)
     
     
-def updateJournal( journal: str, journalID: str, userID: str )-> bool:
+def updateJournal( journal: str, updated_date: int, journalID: str, userID: str )-> bool:
     
     try:
         
         cursor.execute(
-            ''' UPDATE journals SET journal= ? WHERE jid= ? AND uid= ? ''',
-            (journal, journalID, userID,)
+            ''' UPDATE journals SET journal= ?, updated_date= ? WHERE jid= ? AND uid= ? ''',
+            (journal, updated_date, journalID, userID,)
         )
+        return True
         
     except Exception as e:
         print("Error[updateJournal]:", e)
@@ -171,13 +171,14 @@ def deleteUser( userID: str )-> bool:
         print("Error[deleteUser]",e)
 
 
-def deleteJournal( journalID: str )-> bool:
+def deleteJournal( journalID: str, userID: str )-> bool:
     
     try:
         cursor.execute(
-            ''' DELETE FROM journal WHERE jid= ?''',(journalID,)
+            ''' DELETE FROM journals WHERE jid= ? AND uid= ?''',(journalID, userID,)
         )
-                
+        return True
+    
     except Exception as e:
         print("Error[deleteUser]",e)
 
