@@ -12,32 +12,37 @@ if 'auth' not in st.session_state: st.session_state.auth= {
 }
 
 if 'reloadData' not in st.session_state: st.session_state.reloadData= {
-    'journal': True
+    'journal': True,
+    'sa': True
 }
 
 if 'journals' not in st.session_state: st.session_state.journals= {}
 
-if 'sentiment' not in st.session_state: st.session_state.sentiment= {}
+# Stores journal sentiment analysis(js: dict) data and  overall sentimenl analysis(sa: str)
+if 'sentiment' not in st.session_state: st.session_state.sentiment= {
+    'js': {},
+    'sa': ''
+}
 
 #main
 def main() -> None:
     
     navBar()
     
-    jlst, smry= st.columns([0.7, 0.3])
+    jlst, smry= st.columns([0.6, 0.4])
     
     with jlst.container():
-        selected= JournalList()
+        JournalList()
         
     with smry.container():
-        sentimentView(selected)
+        sentimentView()
     
     
     
 if __name__ == "__main__":
     
     st.title("Journal x LLM 🦙", anchor= False)
-    
+    # st.session_state
     if st.session_state.auth['uid']:
         main()
     else:

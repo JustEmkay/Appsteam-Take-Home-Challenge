@@ -21,8 +21,8 @@ def logout()-> None:
 def navBar()-> None:
                 
     # navbar
-    statusCol, bttns= st.columns([0.5, 0.5], vertical_alignment= 'center')
-    crttBtn, loutBttn= bttns.columns([0.8, 0.2])
+    statusCol, bttns= st.columns([0.6, 0.4], vertical_alignment= 'center')
+    crttBtn, loutBttn= bttns.columns([0.7, 0.3])
     
     statusCol.info(f"{datetime.datetime.now().date()}")
     if crttBtn.button('Create a Journal', use_container_width= True,

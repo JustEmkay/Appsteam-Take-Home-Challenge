@@ -2,8 +2,11 @@ import streamlit as st
 
 from reqs import getJournal
 from components.functions import timestamp2Datetime, filterJournal
+from components.sentimentView import eachSentimental
 
 
+
+# JOURNAL-LIST CONTAINER
 def JournalList()-> None:
     
     filterOpt: list= [ 'Day', 'Week', 'Month', 'Year', 'All' ]
@@ -25,18 +28,19 @@ def JournalList()-> None:
                                              filterOpt, default= 'All')
 
             fltrJ: dict= filterJournal(st.session_state.journals, option= selection)
-            tempKeys: list=[]
+
             for key, data in fltrJ.items():
                 
-                with st.expander(f"{timestamp2Datetime(data['created_date'])}"):
-                    st.markdown(data['journal'])
+                with st.expander(f" :green[:material/Calendar_Month: {timestamp2Datetime(data['created_date'])}]"):
+                    st.markdown(data['journal'], help= f"created on:{timestamp2Datetime(data['created_date'])}")
                     if st.checkbox("Generate Sentiment analysis",
                                    help= ":material/Smart_Toy: Generate AI Sentiment Analysis: Emotion detection and Polarity classification ",
                                    key= key, value= False):
-                        tempKeys.append(key)
+
+                        # JOURNAL SENTIMENTAL CONTAINER
+                        eachSentimental(key)    
                 
                 
-            return tempKeys
                     
         else:
             st.text('no journal list found')

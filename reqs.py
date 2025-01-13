@@ -30,9 +30,16 @@ def getJournal( userID: str ):
     if res==200:
         return req.json()
     
-def getSentimenatAnalysis( userID: str, jidList: list ):
+def getJournalAnalysis( userID: str, jid: str ):
     
-    req= requests.get( API_URL+ f"/journal/sentiment/{userID}/{jidList}" )
+    req= requests.get( API_URL+ f"/journal/sentiment/{userID}/{jid}" )
+    res= req.status_code
+    if res==200:
+        return req.json()
+    
+def getSentimenatAnalysis( userID: str ):
+    
+    req= requests.get( API_URL+ f"/journal/sentiment/{userID}" )
     res= req.status_code
     if res==200:
         return req.json()

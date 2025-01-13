@@ -69,14 +69,21 @@ def insertJournal(**journalInfo)-> bool:
     
     except Exception as e:
         print("Error[insertJournal]:",e)
+
     
 def getJournals(uid: str, limit: int= None)-> dict:
     
     try:
-        cursor.execute('''SELECT jid, journal, created_date,
-                       updated_date FROM journals WHERE uid=?
-                       ORDER BY created_date ASC''',
-                       (uid,))
+        if not limit:
+            cursor.execute('''SELECT jid, journal, created_date,
+                        updated_date FROM journals WHERE uid=?
+                        ORDER BY created_date DESC''',
+                        (uid,))
+        else:
+            cursor.execute('''SELECT jid, journal, created_date,
+                        updated_date FROM journals WHERE uid=?
+                        ORDER BY created_date DESC''',
+                        (uid,))
         #result: list[tuple[jid, journal, created_Date, updated_date]]
         result= cursor.fetchall() 
         
@@ -96,7 +103,29 @@ def getJournals(uid: str, limit: int= None)-> dict:
     except Exception as e:
         print("Error[getJournal]:",e)
         
+
+def selectedJournal(uid: str, jids: list)-> dict:
+    
+    print(list(jids))
+    
+    placeholder: str= ",".join('?' for _ in jids)
+    print(placeholder)
+    try:
+        cursor.execute(f"""
+                       SELECT journal, created_date FROM journals WHERE uid= ? AND jid IN ({ placeholder })
+                       """,(uid,)+tuple(jids))
+        result= cursor.fetchall()
+        tempDict: dict= {}
+        for indx, _ in enumerate(result):
+            tempDict.update({ jids[indx] :{'journal':_[0], 'created_date': _[1]}})
         
+        return tempDict
+        
+        
+    except Exception as e:
+        print("Error[selectedJournal]:",e)
+
+    
 def verifyUsers(username: str, uid: str= None)-> tuple:
     
     try:

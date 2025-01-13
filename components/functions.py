@@ -1,4 +1,4 @@
-
+import hashlib
 import datetime
 
 
@@ -37,3 +37,9 @@ def filterJournal( journalsData: dict, option: str ) -> dict:
                 tempDict.update({key:data})
 
     return tempDict            
+
+def hashList( selectedList: list )-> str:
+    
+    l2s: str= "".join(selectedList)
+    return hashlib.sha256(l2s.encode()).hexdigest()
+

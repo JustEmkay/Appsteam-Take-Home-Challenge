@@ -1,11 +1,14 @@
-from fastapi import FastAPI, Query
+from fastapi import FastAPI
 from pydantic import BaseModel
-import datetime, uuid, bcrypt
+import datetime, uuid, bcrypt, json
 from database import *
-from typing import Annotated, List
+
+from llm import OllamaLLM
+from prompt import JS_PROMPT, SA_PROMPT 
 
 
 app= FastAPI()
+llm= OllamaLLM( model_name= "llama3.2:1b" )
 
 # Schema
 class registerInfo(BaseModel):
@@ -111,11 +114,64 @@ async def getallJournal( uid: str )-> dict:
         "journals": journals
     }
     
-@app.get("/journal/sentiment/{uid}/{jidList}")
-async def sentiment( uid: str, jidList )-> dict:
+@app.get("/journal/sentiment/{uid}/{jid}")
+async def sentiment(uid: str, jid: str)-> dict:
     
-    print(jidList)
+    jdata= selectedJournal( uid= uid, jids= [jid] )
+    
+    if jdata:
+        query: str= f""" 
+        {datetime.datetime.fromtimestamp(jdata[jid]['created_date']).strftime("%d/%m/%Y")}
+        
+        {jdata[jid]['journal']}
+        """
+
+        response= llm.ollamaRequest(prompt_template= JS_PROMPT, user_query= query)
+        
+        return {
+            'jid': jid,
+            'js': response['response']['message']['content']
+        }
+        
+    
+# @app.get("/journal/sentiment/{uid}")
+# async def sentiment( uid: str, jidList: list[str] )-> dict:
+    
+#     Rjournals= selectedJournal(uid= uid, jids= jidList)
+    
+#     if Rjournals:
+            
+#         tempDict={}   
+#         for key, jdata in Rjournals.items():
+        
+#             query: str= f"""
+#             {datetime.datetime.fromtimestamp(jdata['created_date']).strftime("%Y-%m-%d")}
+            
+#             {jdata['journal']}
+#             """
+        
+#             result= llm.ollamaRequest(user_query= query, prompt_template= PROMPT_TEMP )
+#             tempDict.update({key: result['response']['message']['content']})
+    
+#         return {
+#             'sentiment': tempDict
+#             }
+    
+@app.get("/journal/sentiment/{uid}")
+async def overallSentiment( uid: str )-> dict:
+    
+    jdata= getJournals(uid= uid)
+    if jdata:
+        # query= {}
+        # for key, data in jdata:
+        #     query 
+        
+        json_obj= json.dumps(jdata, indent= 2)
+        
+        response= llm.ollamaRequest(user_query= json_obj, prompt_template= SA_PROMPT )
+
+    
     
     return {
-        'sentiment': 'lol'
+        'sa': response['response']['message']['content'] 
     }
