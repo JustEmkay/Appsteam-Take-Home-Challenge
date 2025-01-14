@@ -1,7 +1,10 @@
 
 
 JS_PROMPT= """ 
-Your task is to find sentiment emotions detected of the following jounal given by the user.
+Your task is to find emotions detected of the following jounal given by the user.
+
+'''
+
 """
 
 JS_PROMPT1= """
@@ -28,8 +31,15 @@ SA_PROMPT= """
     Your job is to Analyze the sentiment of the journals and provide a brif note on emotional detection and Polarity Classification
     of the user. Don't write unnecessary things.
     
-    Provide a sentiment analysis report, including:
-    * Emotion detection result for each journal entry.
-    * Polarity classification result for each journal entry using percentage  (positive, negative, or neutral)
-    * A brif explanation  supportion your analysis for each journal entry.
+Answer only in following format given below.
+
+Emotion Detection:
+* <emotion1> : <example>
+* <emotion2> : <example>
+* <emotionN> : <example>
+
+Polarity Classificattion:
+* Positive: <number of entiries> <percentage>
+* Negative: <number of entiries> <percentage>
+* Neutral: <number of entiries> <percentage>
 """
