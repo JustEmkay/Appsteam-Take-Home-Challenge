@@ -1,15 +1,6 @@
 import streamlit as st
 
 from reqs import getSentimenatAnalysis, getJournalAnalysis
-from components.functions import hashList
-
-
-def check_sentimentData( selected: list )-> str:
-    
-    hashKey: str= hashList(selectedList= selected)
-    
-    if hashKey in st.session_state.sentiment:
-        return hashKey
 
 
 # OVERALL SENNTIMENT ANALYSIS

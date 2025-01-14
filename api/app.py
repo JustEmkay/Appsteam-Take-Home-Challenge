@@ -38,7 +38,8 @@ def hashPassword( userPass: str, hashedPass: str= None ) -> bool:
 @app.get("/")
 async def test(): 
     return {
-        'print': "hello world"
+        'author': "emaky",
+        'linkedIn': "https://github.com/JustEmkay/"
     }
  
 @app.post("/register")
@@ -106,8 +107,6 @@ async def createJournal( uid: str, journal: journalInfo )-> dict:
 async def getallJournal( uid: str )-> dict:
 
     journals: dict= getJournals(uid= uid)
-    
-    print("api:\n",journals)
     
     return {
         "journals": journals

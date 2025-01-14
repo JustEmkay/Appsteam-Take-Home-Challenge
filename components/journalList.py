@@ -69,9 +69,8 @@ def JournalList()-> None:
                                       help= ":red[Delete :material/Delete:]",
                                       use_container_width= True):
                         
+                        # Delete Alert Box
                         deleteAlert( jid= key)
-                        
-                        
                         
                         
                     # EDITT BUTTON

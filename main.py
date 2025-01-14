@@ -27,7 +27,7 @@ if 'sentiment' not in st.session_state: st.session_state.sentiment= {
 #main
 def main() -> None:
     
-    navBar()
+    navBar() #Navigation
     
     jlst, smry= st.columns([0.6, 0.4])
     
@@ -42,7 +42,6 @@ def main() -> None:
 if __name__ == "__main__":
     
     st.title("Journal x LLM 🦙", anchor= False)
-    # st.session_state
     if st.session_state.auth['uid']:
         main()
     else:
